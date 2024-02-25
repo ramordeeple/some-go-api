@@ -1,31 +1,44 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
-func Pic(dx, dy int) [][]uint8 {
-	pic := make([][]uint8, dy)
 
-	for y := 0; y < dy; y++ {
-		row := make([]uint8, dx)
-		for x := 0; x < dx; x++ {
-			row[x] = uint8((x + y) / 2)
+func fibonacci() func() int {
+	var x, prev1, prev2 int
+
+	return func() int {
+		var fib int
+		var tmp int
+		x += 1
+
+		if x == 1 {
+			fib = 0
+			prev1 = fib
+		} else if x == 2 {
+			fib = 1
+			tmp = fib
+			prev1 = tmp
+		} else {
+			fib = prev1 + prev2
+			tmp = prev1
+			prev1 = fib
+			prev2 = tmp
 		}
-		pic[y] = row
-	}
 
-	return pic
-}
-
-func printPic(pic [][]uint8) {
-	for _, row := range pic { 
-		for _, value := range row {
-			fmt.Print(value, "")
-		}
-		fmt.Println()
+		return fib
 	}
 }
 
 func main() {
-	image := Pic(10, 5)
-	printPic(image)
+	f := fibonacci()
+
+	for i := 0; i < 25; i++ {
+		fmt.Println(f())
+	}
+
+
+
 }
+
