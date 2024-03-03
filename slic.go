@@ -10,6 +10,7 @@ type IPAddr [4]byte
 
 func (ip IPAddr) String() string { 
 	s := make([]string, len(ip))
+	
 	for i, value := range ip {
 		s[i] = strconv.Itoa(int(value))
 	}
