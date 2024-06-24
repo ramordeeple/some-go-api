@@ -1,28 +1,49 @@
 package main
 
 import (
-	"fmt"
-	"io"
+	"context"
+	"gotest/handlers"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"time"
 )
 
 
 func main() {
-	http.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) {
-		log.Println("Hello")
-		d, err := io.ReadAll(r.Body)
-		if err != nil {
-			http.Error(rw, "Oops", http.StatusBadRequest)
-			return
-		}
+	l := log.New(os.Stdout, "product-api", log.LstdFlags)
+	hh := handlers.NewHello(l)
+	gh := handlers.NewGoodbye(l)
 
-		fmt.Fprintf(rw, "Hello %s", d)
-	})
+	sm := http.NewServeMux()
 
-	http.HandleFunc("/goodbye", func( http.ResponseWriter, *http.Request) {
-		log.Println("Bye...")
-	})
+	sm.Handle("/", hh)
+	sm.Handle("/goodbye", gh)
 
-	http.ListenAndServe(":9090", nil)
+	s := &http.Server{
+		Addr: ":9090",
+		Handler: sm,
+		IdleTimeout: 120 * time.Second,
+		ReadTimeout: 1 * time.Second,
+		WriteTimeout: 1 * time.Second,
+	}
+
+	go func() {
+		err := s.ListenAndServe()
+		if err!= nil {
+            l.Fatal(err)
+        }
+	}()
+	
+	sigChan := make(chan os.Signal)
+	signal.Notify(sigChan, os.Interrupt)
+	signal.Notify(sigChan, os.Kill)
+
+	sig := <- sigChan
+	l.Println("Received terminate, graceful shutdown", sig)
+
+	tc, _ := context.WithTimeout(context.Background(), 30*time.Second)
+	s.Shutdown(tc)
+	
 }
