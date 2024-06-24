@@ -1,8 +1,28 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"io"
+	"log"
+	"net/http"
+)
 
 
 func main() {
-	fmt.Println("Starting")
+	http.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) {
+		log.Println("Hello")
+		d, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(rw, "Oops", http.StatusBadRequest)
+			return
+		}
+
+		fmt.Fprintf(rw, "Hello %s", d)
+	})
+
+	http.HandleFunc("/goodbye", func( http.ResponseWriter, *http.Request) {
+		log.Println("Bye...")
+	})
+
+	http.ListenAndServe(":9090", nil)
 }
