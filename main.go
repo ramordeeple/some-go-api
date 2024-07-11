@@ -13,11 +13,13 @@ import (
 
 func main() {
 
-	l := log.New(os.Stdout, "product-api", log.LstdFlags)
+	l := log.New(os.Stdout, "product-api ", log.LstdFlags)
 	ph := handlers.NewProducts(l)
 
 	sm := http.NewServeMux()
 	sm.Handle("/", ph)
+	sm.Handle("/{id}", ph)
+	
 
 	s := &http.Server{
 		Addr: ":9090",
@@ -43,5 +45,4 @@ func main() {
 
 	tc, _ := context.WithTimeout(context.Background(), 30*time.Second)
 	s.Shutdown(tc)
-	
 }
