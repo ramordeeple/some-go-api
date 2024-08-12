@@ -2,10 +2,9 @@ package main
 
 import (
 	"fmt"
-	"testing"
-
 	"gotest/sdk/client"
 	"gotest/sdk/client/products"
+	"testing"
 )
 
 func TestOurClient(t *testing.T) {
@@ -18,6 +17,6 @@ func TestOurClient(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	fmt.Printf("#%v", prod.GetPayload()[0])
+	fmt.Printf("#%v", prod.GetPayload())
 	t.Fail()
 }
