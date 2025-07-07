@@ -11,9 +11,8 @@ import (
 	"time"
 
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/gorilla/mux"
 	gohandlers "github.com/gorilla/handlers"
-
+	"github.com/gorilla/mux"
 )
 
 
